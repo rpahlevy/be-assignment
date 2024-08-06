@@ -1,0 +1,73 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model PaymentAccount {
+  id              Int           @id @default(autoincrement())
+  user_id         String
+  account_number  String
+  account_type    ACCOUNT_TYPE
+  balance         Decimal       @default(0)
+
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+
+  payment_histories PaymentHistory[]
+
+  @@index([user_id, account_number])
+}
+
+model PaymentHistory {
+  id                Int               @id @default(autoincrement())
+  account_id        Int
+  transaction_id    String
+  amount            Decimal
+  currency          String            @default("IDR")
+  transaction_type  TRANSACTION_TYPE
+
+  created_at        DateTime  @default(now())
+
+  account     PaymentAccount  @relation(fields: [account_id], references: [id])
+  transaction Transaction     @relation(fields: [transaction_id], references: [id])
+
+  @@index([account_id, transaction_id])
+}
+
+model Transaction {
+  id                  String              @id @default(uuid())
+  sender_account_id   Int
+  receiver_account_id Int
+  amount              Decimal
+  currency            String              @default("IDR")
+  status              TRANSACTION_STATUS  @default(PENDING)
+
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+
+  payment_history PaymentHistory[]
+
+  @@index([sender_account_id, receiver_account_id])
+}
+
+enum ACCOUNT_TYPE {
+  DEBIT
+  CREDIT
+  LOAN
+}
+
+enum TRANSACTION_TYPE {
+  SEND
+  RECEIVE
+  WITHDRAW
+}
+
+enum TRANSACTION_STATUS {
+  PENDING
+  SUCCESS
+  CANCELED
+}
