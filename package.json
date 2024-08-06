@@ -4,10 +4,10 @@
   "author": "Rio Pahlevy",
   "license": "ISC",
   "description": "A backend service project implementing an Account Manager and Payment Manager using Node.js, Fastify, and Prisma. This project includes user registration, login, account management, and transaction processing, with Docker setup and Swagger documentation for API endpoints.",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "dev": "nodemon src/index.ts",
-    "test": "jest"
+    "dev": "nodemon --files src/index.ts",
+    "start:migrate:dev": "npx prisma migrate deploy && npm run dev"
   },
   "repository": {
     "type": "git",
@@ -36,5 +36,8 @@
     "prisma": "^5.17.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
+  },
+  "execMap": {
+    "ts": "ts-node"
   }
 }
