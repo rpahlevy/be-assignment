@@ -1,0 +1,40 @@
+{
+  "name": "be-assignment",
+  "version": "1.0.0",
+  "author": "Rio Pahlevy",
+  "license": "ISC",
+  "description": "A backend service project implementing an Account Manager and Payment Manager using Node.js, Fastify, and Prisma. This project includes user registration, login, account management, and transaction processing, with Docker setup and Swagger documentation for API endpoints.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.ts",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpahlevy/be-assignment.git"
+  },
+  "keywords": [
+    "node.js",
+    "fastify",
+    "prisma"
+  ],
+  "bugs": {
+    "url": "https://github.com/rpahlevy/be-assignment/issues"
+  },
+  "homepage": "https://github.com/rpahlevy/be-assignment#readme",
+  "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.28.1",
+    "fastify-plugin": "^4.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.1.0",
+    "@types/nodemon": "^1.19.6",
+    "nodemon": "^3.1.4",
+    "prisma": "^5.17.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}

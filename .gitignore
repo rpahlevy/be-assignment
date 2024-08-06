@@ -1,0 +1,30 @@
+# Node.js-specific
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Editor files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.user
+*.jscsrc
+*.jshintrc
+*.tern-project
+*.sublime-project
+*.sublime-workspace
+
+# Logs and temp files
+logs
+tmp
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Prisma specific
+prisma/migrations
+
+# Environment variables
+.env
