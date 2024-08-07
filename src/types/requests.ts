@@ -12,6 +12,10 @@ export interface PaymentAccountRequest {
   currency: string;
 }
 
+export interface PaymentHistoryRequest {
+  account_number: string;
+}
+
 export interface SendRequest {
   account_number: string;
   receiver_account_number: string;

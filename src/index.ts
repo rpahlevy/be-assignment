@@ -4,6 +4,7 @@ import { supabase } from './config/supabase';
 import prisma from './config/prisma';
 import authRoutes from './routes/authRoute';
 import paymentAccountRoutes from './routes/paymentAccountRoute';
+import paymentHistoryRoutes from './routes/paymentHistoryRoute';
 import transactionRoutes from './routes/transactionRoute';
 
 const app = Fastify({ logger: true });
@@ -16,6 +17,7 @@ app.register(fastifyPlugin(async (fastify: FastifyInstance) => {
 // Register routes
 app.register(authRoutes);
 app.register(paymentAccountRoutes);
+app.register(paymentHistoryRoutes);
 app.register(transactionRoutes);
 
 // Start the server

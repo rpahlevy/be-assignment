@@ -1,5 +1,7 @@
 import { TRANSACTION_TYPE } from "@prisma/client";
 import prisma from "../config/prisma";
+import { PaymentHistoryRequest } from "../types/requests";
+import { findAccountByNumber, getAccountsByUserId } from "./paymentAccountService";
 
 
 export const createPaymentHistoryRecord = async (
@@ -15,5 +17,26 @@ export const createPaymentHistoryRecord = async (
       amount,
       transaction_type,
     },
+  });
+};
+
+export const getPaymentHistoriesByUserId = async (user_id: string, payment_history: PaymentHistoryRequest) => {
+  let accountIds: number[] = [];
+  if (payment_history.account_number) {
+    const paymentAccount = await findAccountByNumber(payment_history.account_number);
+    if (!paymentAccount) {
+      throw new Error("Payment account not found");
+    }
+    accountIds.push(paymentAccount.id);
+  } else {
+    const paymentAccounts = await getAccountsByUserId(user_id);
+    accountIds = paymentAccounts.map(account => account.id);
+  }
+  const whereClause: any = {
+    account_id: { in: accountIds }
+  };
+
+  return await prisma.paymentHistory.findMany({
+    where: whereClause,
   });
 };
