@@ -12,14 +12,8 @@ export interface PaymentAccountRequest {
   currency: string;
 }
 
-export interface WithdrawRequest {
-  account_number: string;
-  amount: number;
-  currency: string;
-}
-
 export interface SendRequest {
-  sender_account_number: string;
+  account_number: string;
   receiver_account_number: string;
   amount: number;
   currency: string;

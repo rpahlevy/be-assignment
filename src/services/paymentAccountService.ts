@@ -44,18 +44,18 @@ const createPaymentAccountRecord = async (
 
 export const handleCreatePaymentAccount = async (user_id: string, paymentAccount: PaymentAccountRequest) => {
   if (!paymentAccount.account_number) {
-    throw new Error('Missing/invalid account number');
+    throw new Error("Missing/invalid account number");
   }
   if (!paymentAccount.currency) {
-    throw new Error('Missing/invalid currency');
+    throw new Error("Missing/invalid currency");
   }
   if (!Object.values(ACCOUNT_TYPE).includes(paymentAccount.account_type)) {
-    throw new Error('Invalid account type. Only accept: '+ Object.values(ACCOUNT_TYPE).join(', '));
+    throw new Error("Invalid account type. Only accept: " + Object.values(ACCOUNT_TYPE).join(", "));
   }
-  if (typeof paymentAccount.balance !== 'number' || paymentAccount.balance < 0) {
-    throw new Error('Invalid balance');
+  if (typeof paymentAccount.balance !== "number" || paymentAccount.balance < 0) {
+    throw new Error("Invalid balance");
   }
-  
+
   try {
     return await createPaymentAccountRecord(
       user_id,
@@ -65,8 +65,8 @@ export const handleCreatePaymentAccount = async (user_id: string, paymentAccount
       paymentAccount.currency
     );
   } catch (error: any) {
-    if (error.code === 'P2002' && error.meta?.target.includes('account_number')) {
-      throw new Error('Account number already exists');
+    if (error.code === "P2002" && error.meta?.target.includes("account_number")) {
+      throw new Error("Account number already exists");
     } else {
       throw error;
     }

@@ -15,9 +15,9 @@ export const getPaymentAccounts = async (request: FastifyRequest, reply: Fastify
 export const createPaymentAccount = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
     const user_id = request.user.id;
-    const newAccount = await handleCreatePaymentAccount(user_id, request.body as PaymentAccountRequest)
+    const newAccount = await handleCreatePaymentAccount(user_id, request.body as PaymentAccountRequest);
     reply.send(newAccount);
   } catch (error: any) {
     reply.status(400).send({ error: error.message });
   }
-}
+};
