@@ -1,6 +1,6 @@
 # Backend of Account Manager and Payment Manager
 
-This project consists of two backend services: the Account Manager and the Payment Manager. These services handle user registration, login, account management, and transaction processing.
+A backend service project implementing an Account Manager and Payment Manager using Node.js, Fastify, and Prisma. This project includes user registration, login, account management, and transaction processing, with Docker setup and Swagger documentation for API endpoints.
 
 ## Installation
 
