@@ -1,16 +1,6 @@
 import { PaymentAccount, TRANSACTION_STATUS, TRANSACTION_TYPE } from '@prisma/client';
 import prisma from '../config/prisma';
-
-const findAccountByNumber = async (account_number: string, user_id?: string) => {
-  const whereClause: any = { account_number };
-  if (user_id) {
-    whereClause.user_id = user_id;
-  }
-  
-  return await prisma.paymentAccount.findFirst({
-    where: whereClause
-  });
-};
+import { findAccountByNumber } from './paymentAccountService';
 
 const createTransactionRecord = async (sender_account_id: number, receiver_account_id: number, amount: number, currency: string) => {
   return await prisma.transaction.create({
