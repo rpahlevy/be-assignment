@@ -1,5 +1,10 @@
 import { TRANSACTION_TYPE } from "@prisma/client";
 
+export interface AuthRequest {
+  email: string;
+  password: string;
+}
+
 export interface WithdrawRequest {
   account_number: string;
   amount: number;
