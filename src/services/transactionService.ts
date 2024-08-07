@@ -5,7 +5,8 @@ import {
 } from "@prisma/client";
 import prisma from "../config/prisma";
 import { SendRequest } from "../types/requests";
-import { findAccountByNumber } from "./paymentAccountService";
+import { findAccountByNumber, getAccountsByUserId } from "./paymentAccountService";
+import { createPaymentHistoryRecord } from "./paymentHistoryService";
 
 const createTransactionRecord = async (
   sender_account_id: number,
@@ -34,22 +35,6 @@ const updateTransactionRecord = async (transaction_id: string, status: TRANSACTI
   });
 };
 
-const createPaymentHistoryRecord = async (
-  account_id: number,
-  transaction_id: string,
-  amount: number,
-  transaction_type: TRANSACTION_TYPE
-) => {
-  return await prisma.paymentHistory.create({
-    data: {
-      account_id,
-      transaction_id,
-      amount,
-      transaction_type,
-    },
-  });
-};
-
 const updateAccountBalance = async (
   account_id: number,
   amount: number,
@@ -71,6 +56,21 @@ const processTransaction = async (transaction_id: string) => {
       console.log("Transaction procesing completed for: ", transaction_id);
       resolve(transaction_id);
     }, 30000);
+  });
+};
+
+export const getTransactionsByUserId = async (user_id: string) => {
+  const paymentAccounts = await getAccountsByUserId(user_id);
+  const accountIds = paymentAccounts.map(account => account.id);
+  const whereClause: any = {
+    OR: [
+      { sender_account_id: { in: accountIds } },
+      { receiver_account_id: { in: accountIds } }
+    ]
+  };
+
+  return await prisma.transaction.findMany({
+    where: whereClause,
   });
 };
 

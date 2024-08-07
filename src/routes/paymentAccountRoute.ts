@@ -1,4 +1,3 @@
-// src/routes/paymentAccount.ts
 import { FastifyInstance } from "fastify";
 import { createPaymentAccount, getPaymentAccounts } from "../controllers/paymentAccountController";
 import { authMiddleware } from "../middlewares/auth";

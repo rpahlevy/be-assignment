@@ -1,14 +1,9 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyInstance } from "fastify";
 import { authMiddleware } from "../middlewares/auth";
-import { withdraw, send } from "../controllers/transactionController";
+import { withdraw, send, transactions } from "../controllers/transactionController";
 
 async function transactionRoutes(fastify: FastifyInstance) {
-  // Get all transactions
-  fastify.get("/transactions", { preHandler: [authMiddleware] }, async (request: FastifyRequest, reply: FastifyReply) => {
-    const transactions = await fastify.prisma.transaction.findMany();
-    reply.send(transactions);
-  });
-
+  fastify.get("/transactions", { preHandler: [authMiddleware] }, transactions);
   fastify.post("/withdraw", { preHandler: [authMiddleware] }, withdraw);
   fastify.post("/send", { preHandler: [authMiddleware] }, send);
 }
