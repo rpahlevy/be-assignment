@@ -1,8 +1,15 @@
-import { TRANSACTION_TYPE } from "@prisma/client";
+import { ACCOUNT_TYPE } from "@prisma/client";
 
 export interface AuthRequest {
   email: string;
   password: string;
+}
+
+export interface PaymentAccountRequest {
+  account_number: string;
+  account_type: ACCOUNT_TYPE;
+  balance: number;
+  currency: string;
 }
 
 export interface WithdrawRequest {
