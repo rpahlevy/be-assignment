@@ -10,16 +10,17 @@ generator client {
 model PaymentAccount {
   id              Int           @id @default(autoincrement())
   user_id         String
-  account_number  String
+  account_number  String        @unique
   account_type    ACCOUNT_TYPE
   balance         Decimal       @default(0)
+  currency        String        @default("IDR")
 
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt
 
   payment_histories PaymentHistory[]
 
-  @@index([user_id, account_number])
+  @@index([user_id])
 }
 
 model PaymentHistory {
