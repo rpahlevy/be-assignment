@@ -18,6 +18,9 @@ async function transactionRoutes(fastify: FastifyInstance) {
     if (!account_number || amount <= 0) {
       return reply.status(400).send({ error: 'Invalid account number or amount' });
     }
+    if (!currency) {
+      return reply.status(400).send({ error: 'Enter currency' });
+    }
 
     const account = await fastify.prisma.paymentAccount.findFirst({
       where: {
