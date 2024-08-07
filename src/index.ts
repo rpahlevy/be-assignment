@@ -1,13 +1,12 @@
 import Fastify, { FastifyInstance } from 'fastify';
-import { PrismaClient } from '@prisma/client';
 import fastifyPlugin from 'fastify-plugin';
 import { supabase } from './config/supabase';
-import authRoutes from './routes/auth';
-import paymentAccountRoutes from './routes/paymentAccount';
-import transactionRoutes from './routes/transaction';
+import prisma from './config/prisma';
+import authRoutes from './routes/authRoute';
+import paymentAccountRoutes from './routes/paymentAccountRoute';
+import transactionRoutes from './routes/transactionRoute';
 
 const app = Fastify({ logger: true });
-const prisma = new PrismaClient();
 
 app.register(fastifyPlugin(async (fastify: FastifyInstance) => {
   fastify.decorate('prisma', prisma);
