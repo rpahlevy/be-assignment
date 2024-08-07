@@ -1,6 +1,69 @@
 import { PaymentAccount, TRANSACTION_STATUS, TRANSACTION_TYPE } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
 import prisma from '../config/prisma';
+
+const findAccountByNumber = async (account_number: string, user_id?: string) => {
+  const whereClause: any = { account_number };
+  if (user_id) {
+    whereClause.user_id = user_id;
+  }
+  
+  return await prisma.paymentAccount.findFirst({
+    where: whereClause
+  });
+};
+
+const createTransactionRecord = async (sender_account_id: number, receiver_account_id: number, amount: number, currency: string) => {
+  return await prisma.transaction.create({
+    data: {
+      sender_account_id,
+      receiver_account_id,
+      amount,
+      currency,
+      status: 'PENDING'
+    }
+  });
+};
+
+const updateTransactionRecord = async (transaction_id: string, status: TRANSACTION_STATUS) => {
+  const updateData: any = {};
+  updateData.status = status;
+
+  return await prisma.transaction.update({
+    where: { id: transaction_id },
+    data: updateData
+  });
+};
+
+const createPaymentHistoryRecord = async (account_id: number, transaction_id: string, amount: number, transaction_type: TRANSACTION_TYPE) => {
+  return await prisma.paymentHistory.create({
+    data: {
+      account_id,
+      transaction_id,
+      amount,
+      transaction_type
+    }
+  });
+};
+
+const updateAccountBalance = async (account_id: number, amount: number, operation: 'increment' | 'decrement') => {
+  const updateData: any = {};
+  updateData.balance = { [operation]: amount };
+
+  return await prisma.paymentAccount.update({
+    where: { id: account_id },
+    data: updateData
+  });
+};
+
+const processTransaction = async(transaction_id: string) => {
+  return new Promise((resolve, reject) => {
+    console.log('Processing transaction: ', transaction_id);
+    setTimeout(() => {
+      console.log('Transaction procesing completed for: ', transaction_id);
+      resolve(transaction_id);
+    }, 30000);
+  });
+}
 
 export const handleTransaction = async (
   user_id: string,
@@ -18,18 +81,12 @@ export const handleTransaction = async (
     throw new Error('Enter currency');
   }
 
-  const senderAccount = await prisma.paymentAccount.findFirst({
-    where: {
-      account_number: sender_account_number,
-      user_id
-    }
-  });
-
+  const senderAccount = await findAccountByNumber(sender_account_number, user_id);
   if (!senderAccount) {
     throw new Error('Sender account not found');
   }
 
-  if (senderAccount.balance < new Decimal(amount)) {
+  if (senderAccount.balance.lessThan(amount)) {
     throw new Error('Insufficient balance');
   }
 
@@ -39,54 +96,33 @@ export const handleTransaction = async (
       throw new Error('Receiver account number is required for SEND transaction');
     }
 
-    receiverAccount = await prisma.paymentAccount.findFirst({
-      where: { account_number: receiver_account_number }
-    });
-
+    receiverAccount = await findAccountByNumber(receiver_account_number);
     if (!receiverAccount) {
       throw new Error('Receiver account not found');
     }
   }
 
-  const transaction = await prisma.transaction.create({
-    data: {
-      sender_account_id: senderAccount.id,
-      receiver_account_id: receiverAccount.id,
-      amount,
-      currency,
-      status: TRANSACTION_STATUS.PENDING
+  let newTransaction = await createTransactionRecord(senderAccount.id, receiverAccount.id, amount, currency);
+
+  // simulate transaction processing
+  await processTransaction(newTransaction.id);
+
+  return await prisma.$transaction(async (prisma) => {
+    // change status to SUCCESS
+    newTransaction = await updateTransactionRecord(newTransaction.id, TRANSACTION_STATUS.SUCCESS);
+
+    // add history for sender
+    await createPaymentHistoryRecord(senderAccount.id, newTransaction.id, amount, type);
+
+    // add history and update balance for receiver
+    if (type === 'SEND') {
+      await createPaymentHistoryRecord(receiverAccount.id, newTransaction.id, amount, 'RECEIVE');
+      await updateAccountBalance(receiverAccount.id, amount, 'increment');
     }
+
+    // finally update balance for sender
+    await updateAccountBalance(senderAccount.id, amount, 'decrement');
+
+    return newTransaction;
   });
-
-  await prisma.paymentHistory.create({
-    data: {
-      account_id: senderAccount.id,
-      transaction_id: transaction.id,
-      amount,
-      transaction_type: type
-    }
-  });
-
-  if (type === TRANSACTION_TYPE.SEND) {
-    await prisma.paymentHistory.create({
-      data: {
-        account_id: receiverAccount.id,
-        transaction_id: transaction.id,
-        amount,
-        transaction_type: TRANSACTION_TYPE.RECEIVE
-      }
-    });
-
-    await prisma.paymentAccount.update({
-      where: { id: receiverAccount.id },
-      data: { balance: { increment: amount } }
-    });
-  }
-
-  await prisma.paymentAccount.update({
-    where: { id: senderAccount.id },
-    data: { balance: { decrement: amount } }
-  });
-
-  return transaction;
 };

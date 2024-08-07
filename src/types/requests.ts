@@ -1,9 +1,14 @@
 import { TRANSACTION_TYPE } from "@prisma/client";
 
-export interface TransactionRequest {
-  sender_account_number: string;
-  receiver_account_number: string | null;
+export interface WithdrawRequest {
+  account_number: string;
   amount: number;
   currency: string;
-  type: TRANSACTION_TYPE;
+}
+
+export interface SendRequest {
+  sender_account_number: string;
+  receiver_account_number: string;
+  amount: number;
+  currency: string;
 }
