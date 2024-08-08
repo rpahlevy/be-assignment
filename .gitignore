@@ -23,8 +23,5 @@ tmp
 *.bak
 *.swp
 
-# Prisma specific
-prisma/migrations
-
 # Environment variables
 .env
