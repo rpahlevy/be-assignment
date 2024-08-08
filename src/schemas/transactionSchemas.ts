@@ -24,8 +24,6 @@ export const transactionResponseSchema = {
   description: "Details of the Transaction",
   properties: {
     id: { type: "string" },
-    sender_account_id: { type: "number" },
-    receiver_account_id: { type: "number" },
     amount: { type: "number" },
     currency: { type: "string" },
     status: {
@@ -36,6 +34,18 @@ export const transactionResponseSchema = {
       type: "string",
       format: "date-time",
     },
+    account: {
+      type: "object",
+      properties: {
+        account_number: { type: "string" }
+      }
+    },
+    receiver_account: {
+      type: "object",
+      properties: {
+        account_number: { type: "string" }
+      }
+    }
   },
 };
 

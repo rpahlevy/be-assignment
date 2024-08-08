@@ -5,6 +5,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 model PaymentAccount {
@@ -18,7 +19,11 @@ model PaymentAccount {
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt
 
-  payment_histories PaymentHistory[]
+  payment_histories             PaymentHistory[]
+  sent_transactions             Transaction[]       @relation("SentTransaction")
+  received_transaction          Transaction[]       @relation("ReceivedTransaction")
+  recurring_payments            RecurringPayment[]  @relation("UserRecurringPayment")
+  receiving_recurring_payments  RecurringPayment[]  @relation("ReceivedRecurringPayment")
 
   @@index([user_id])
 }
@@ -30,6 +35,7 @@ model PaymentHistory {
   amount            Decimal
   currency          String            @default("IDR")
   transaction_type  TRANSACTION_TYPE
+  recurring_id      Int?
 
   created_at        DateTime  @default(now())
 
@@ -46,13 +52,36 @@ model Transaction {
   amount              Decimal
   currency            String              @default("IDR")
   status              TRANSACTION_STATUS  @default(PENDING)
+  recurring_id        Int?
 
   created_at          DateTime            @default(now())
   updated_at          DateTime            @updatedAt
 
-  payment_history PaymentHistory[]
+  payment_history   PaymentHistory[]
+  account           PaymentAccount    @relation("SentTransaction", fields: [sender_account_id], references: [id])
+  receiver_account  PaymentAccount    @relation("ReceivedTransaction", fields: [receiver_account_id], references: [id])
 
   @@index([sender_account_id, receiver_account_id])
+}
+
+model RecurringPayment {
+  id                    Int                       @id @default(autoincrement())
+  user_id               String
+  account_id            Int
+  recurring_date        DateTime
+  receiver_account_id   Int
+  amount                Decimal
+  currency              String                    @default("IDR")
+  status                RECURRING_PAYMENT_STATUS  @default(ENABLED)
+  last_executed_date    DateTime?
+
+  created_at            DateTime                  @default(now())
+  updated_at            DateTime                  @updatedAt
+
+  account           PaymentAccount  @relation("UserRecurringPayment", fields: [account_id], references: [id])
+  receiver_account  PaymentAccount  @relation("ReceivedRecurringPayment", fields: [receiver_account_id], references: [id])
+
+  @@index([user_id, account_id, status])
 }
 
 enum ACCOUNT_TYPE {
@@ -71,4 +100,9 @@ enum TRANSACTION_STATUS {
   PENDING
   SUCCESS
   CANCELED
+}
+
+enum RECURRING_PAYMENT_STATUS {
+  ENABLED
+  DISABLED
 }

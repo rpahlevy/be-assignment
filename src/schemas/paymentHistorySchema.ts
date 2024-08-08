@@ -14,7 +14,6 @@ export const paymentHistoryResponseSchema = {
     type: "object",
     properties: {
       id: { type: "number" },
-      account_id: { type: "number" },
       transaction_id: { type: "string" },
       amount: { type: "number" },
       currency: { type: "string" },
@@ -23,6 +22,13 @@ export const paymentHistoryResponseSchema = {
         enum: ["SEND", "RECEIVE", "WITHDRAW"],
       },
       created_at: { type: "string", format: "date-time" },
+      recurring_id: { type: "number" },
+      account: {
+        type: "object",
+        properties: {
+          account_number: { type: "string" }
+        }
+      }
     },
   },
 };

@@ -37,6 +37,14 @@ export const getPaymentHistoriesByUserId = async (user_id: string, payment_histo
   };
 
   return await prisma.paymentHistory.findMany({
+    relationLoadStrategy: 'query',
+    include: {
+      account: {
+        select: {
+          account_number: true
+        }
+      },
+    },
     where: whereClause,
   });
 };

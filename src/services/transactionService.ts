@@ -70,6 +70,18 @@ export const getTransactionsByUserId = async (user_id: string) => {
   };
 
   return await prisma.transaction.findMany({
+    include: {
+      account: {
+        select: {
+          account_number: true
+        }
+      },
+      receiver_account: {
+        select: {
+          account_number: true
+        }
+      },
+    },
     where: whereClause,
   });
 };
