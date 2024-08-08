@@ -2,6 +2,20 @@ import { ACCOUNT_TYPE } from "@prisma/client";
 import prisma from "../config/prisma";
 import { PaymentAccountRequest } from "../types/requests";
 
+export const getAccountById = async (
+  account_id: number,
+  user_id?: string
+) => {
+  const whereClause: any = { id: account_id };
+  if (user_id) {
+    whereClause.user_id = user_id;
+  }
+
+  return await prisma.paymentAccount.findFirst({
+    where: whereClause,
+  });
+};
+
 export const findAccountByNumber = async (
   account_number: string,
   user_id?: string

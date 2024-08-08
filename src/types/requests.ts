@@ -21,4 +21,13 @@ export interface SendRequest {
   receiver_account_number: string;
   amount: number;
   currency: string;
+  recurring_id: number | null;
+}
+
+export interface RecurringPaymentRequest {
+  account_number: string;
+  receiver_account_number: string;
+  recurring_date: string;
+  amount: number;
+  currency: string;
 }

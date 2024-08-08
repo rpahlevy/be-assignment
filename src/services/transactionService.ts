@@ -12,7 +12,9 @@ const createTransactionRecord = async (
   sender_account_id: number,
   receiver_account_id: number,
   amount: number,
-  currency: string
+  currency: string,
+  status: TRANSACTION_STATUS = TRANSACTION_STATUS.PENDING,
+  recurring_id: number | null = null
 ) => {
   return await prisma.transaction.create({
     data: {
@@ -20,7 +22,8 @@ const createTransactionRecord = async (
       receiver_account_id,
       amount,
       currency,
-      status: "PENDING",
+      status: status,
+      recurring_id
     },
   });
 };
@@ -86,6 +89,28 @@ export const getTransactionsByUserId = async (user_id: string) => {
   });
 };
 
+const getTransactionById = async (
+  id: string
+) => {
+  const whereClause: any = { id };
+
+  return await prisma.transaction.findFirst({
+    include: {
+      account: {
+        select: {
+          account_number: true
+        }
+      },
+      receiver_account: {
+        select: {
+          account_number: true
+        }
+      },
+    },
+    where: whereClause,
+  });
+};
+
 export const handleTransaction = async (
   user_id: string,
   type: TRANSACTION_TYPE,
@@ -126,7 +151,9 @@ export const handleTransaction = async (
     senderAccount.id,
     receiverAccount.id,
     transaction.amount,
-    transaction.currency
+    transaction.currency,
+    TRANSACTION_STATUS.PENDING,
+    transaction.recurring_id
   );
 
   // simulate transaction processing
@@ -169,6 +196,6 @@ export const handleTransaction = async (
       "decrement"
     );
 
-    return newTransaction;
+    return await getTransactionById(newTransaction.id);
   });
 };

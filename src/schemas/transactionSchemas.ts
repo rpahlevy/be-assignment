@@ -34,6 +34,7 @@ export const transactionResponseSchema = {
       type: "string",
       format: "date-time",
     },
+    recurring_id: { type: "number" },
     account: {
       type: "object",
       properties: {

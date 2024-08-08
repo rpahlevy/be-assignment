@@ -30,10 +30,12 @@
     "@supabase/supabase-js": "^2.45.0",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
-    "fastify-plugin": "^4.5.1"
+    "fastify-plugin": "^4.5.1",
+    "node-schedule": "^2.1.1"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",
+    "@types/node-schedule": "^2.1.7",
     "@types/nodemon": "^1.19.6",
     "nodemon": "^3.1.4",
     "prisma": "^5.17.0",

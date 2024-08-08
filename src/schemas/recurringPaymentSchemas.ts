@@ -15,17 +15,28 @@ export const recurringPaymentResponseSchema = {
   properties: {
     id: { type: "number" },
     user_id: { type: "string" },
-    account_number: { type: "string" },
     recurring_date: { type: "string", format: "date-time" },
-    receiving_account_number: { type: "string" },
     amount: { type: "number" },
     currency: { type: "string" },
+    account: {
+      type: "object",
+      properties: {
+        account_number: { type: "string" }
+      }
+    },
+    receiver_account: {
+      type: "object",
+      properties: {
+        account_number: { type: "string" }
+      }
+    },
+    status: { type: "string" },
     created_at: { type: "string", format: "date-time" },
     updated_at: { type: "string", format: "date-time" },
   },
 };
 
-export const getrecurringPaymentsResponseSchema = {
+export const getRecurringPaymentsResponseSchema = {
   type: "array",
   description: "List of Recurring Payment",
   items: recurringPaymentResponseSchema,

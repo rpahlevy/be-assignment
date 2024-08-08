@@ -9,6 +9,7 @@ import transactionRoutes from './routes/transactionRoute';
 import fastifyFormbody from '@fastify/formbody';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
+import recurringPaymentRoutes from './routes/recurringPaymentRoute';
 
 const app = Fastify({ logger: true });
 
@@ -65,6 +66,7 @@ app.register(authRoutes);
 app.register(paymentAccountRoutes);
 app.register(paymentHistoryRoutes);
 app.register(transactionRoutes);
+app.register(recurringPaymentRoutes);
 
 // Start the server
 const start = async () => {
