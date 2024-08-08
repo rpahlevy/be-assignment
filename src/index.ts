@@ -26,8 +26,6 @@ app.register(fastifySwagger, {
       description: 'A backend service project implementing an Account Manager and Payment Manager using Node.js, Fastify, and Prisma. This project includes user registration, login, account management, and transaction processing, with Docker setup and Swagger documentation for API endpoints.',
       version: '1.0.0',
     },
-    host: 'localhost:3000',
-    schemes: ['http'],
     consumes: ['application/json'],
     produces: ['application/json'],
     securityDefinitions: {
